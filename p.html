@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="p.css">
+</head>
+<body>
+	<div id="wrapper">
+		<header>Test header!</header>
+		<div class="middle">
+
+			<div class="container">
+				<main id="textArea">
+					maintest
+				</main>
+			</div>
+
+			<aside id="statArea">sidebar</aside>
+		</div>
+	</div>
+	<footer id="buttonArea"></div>
+	<script>
+	'use strict';
+	// If I see a file without 'use strict', https://www.youtube.com/watch?v=3X6eTxnh60E (and if any of you perverts think you'll enjoy it, warn me so I can use an iron rod instead)
+	
+	// TODO: Split this into separate files
+	// TODO: Figure out HOW it will be split, tentatively:
+	/* 
+	one file defines the player (and the inventory? TODO: Think on this),
+	other the game startup code,
+	other save and load code, - TODO
+	other the town code, - TODO
+	other the adventure code, - TODO
+	other the event parser code - TODO, probably similar to how monsters are done (nested objects with functions for each event option? Easy as shit to code events, but anything with more than 4 or 5 nested options becomes a cthulhu)
+	one for the generic template monster - for ease of understanding the monster code and creating mods // TODO: Consider implementing an interface for creating simple monsters that don't need custom code?
+	
+	And now for the most important question:
+	One monster per file? This would be the best, other than the potential of having around a hundred lines importing scripts. // TODO: Research if this may cause problems
+	^^^ Same for events
+	*/
+	// TODO: FOR THE LOVE OF GOD TEST THE SPLITTING
+	
+	function doesNothing(){};
+	function randomIntFromInterval(min,max){return Math.floor(Math.random()*(max-min+1)+min);};
+	function randomPercentageMultiplierFromInterval(min,max){
+		/**
+		 * This function is intended to be used when you want, say, a player stat + something between 10 and 25% of it. Multiply the value by the result of this function.
+		 * @return A number between ([min, max] / 100) + 1
+		 */
+		var random = randomIntFromInterval(min, max);
+		var randomPercentage = random / 100;
+		return 1 + randomPercentage;
+	};
+
+	var GAME = {
+		events:{
+			battleOver:new CustomEvent('battleOver') // TODO: Figure out if it's better to place the events in a structure like this, or if the ability to pass the detail argument* to customize things outweighs the benefit of code centralization.
+			// * See parameters here: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent#Constructor
+		},
+		init:function(){
+			GAME.interface.init();
+
+			GAME.main.mainMenu();
+		},
+		
+	}
+	
+
+	var genericMonster = {
+		// These define the battle power of the beast.
+		// The battle power in this case can be any number between 6 and 15, and for every attack a number between negative variationBattlePower and positive variationBattlePower is added to it.
+		// battlePower is left undefined as it MUST always be set in the initialization
+		minBattlePower:6, maxBattlePower:15, variationBattlePower:5, battlePower: undefined,
+		// These two are the actual values used after initialization
+		ballsize:3,
+		dicksize:3,
+		// These are the minimum / maximum values, used for randomization during initialization
+		minBallSize:1, maxBallSize:11,
+		minDickSize:4, maxDickSize:14,
+		// 10 = 10% chance of going for the ass when both holes are there, float values like 2.5 should work, didn't test it too much
+		analChance:50,
+		// This is ALWAYS applied after sex, even if you got a special scene with a special effect too
+		specialEffectOnSex:doesNothing,
+		texts:{
+			// If these texts are used, the monster does not have texts set for the particular encounter version.
+			playerspottedmonster:['Debug text if you see this you saw a bug - player'],
+			monsterspottedplayer:['Debug text if you see this you saw a bug - monster'],
+			neutral:['Debug text if you see this you saw a bug - neutral'],
+			
+			// These 3 functions should work for all normal cases, really
+			// I mean, you might want to overwrite them if your monster has special intros for female players or whatever that's different from "get a random line from all available", ask me if you need more info.
+			getplayerspottedmonsterText:function(){return GAME.currentMonster.playerspottedmonster[randomIntFromInterval(0, GAME.currentMonster.playerspottedmonster.length-1)];},
+			getmonsterspottedplayerText:function(){return GAME.currentMonster.monsterspottedplayer[randomIntFromInterval(0, GAME.currentMonster.monsterspottedplayer.length-1)];},
+			getneutralText:function(){return GAME.currentMonster.neutral[randomIntFromInterval(0, GAME.currentMonster.neutral.length-1)];}
+		},
+		generateNew:function(){ // This gets called when you encounter the monster, the intention is to use it for randomization.
+			GAME.currentMonster.ballsize = randomIntFromInterval(GAME.currentMonster.minBallSize, GAME.currentMonster.maxBallSize);
+			GAME.currentMonster.dicksize = randomIntFromInterval(GAME.currentMonster.minDickSize, GAME.currentMonster.maxDickSize);
+			
+			// TODO: Make this dispatch a "monsterGenerated" event.
+			// TODO: Create event
+			// TODO: Add event to custom monster generators
+			// TODO: Remove custom generators that do EXACTLY what this function does
+		},
+		getBallAdjective:function(){ // This function CAN be overwritten if you want to, just make it return a string and all's good
+			var which;
+			switch (GAME.currentMonster.ballsize){ // TODO: get this list to 10 items per line
+				case 1: 
+				case 2: 
+				case 3: 
+					which = ['tiny','grape-sized', 'petite', 'undersized', 'small']; break;
+				case 4: 
+				case 5: 
+				case 6: 
+					which = ['small', 'average', 'plum-sized', 'strawberry-sized', 'golfball-sized', 'medium', 'medium-sized']; break;
+				case 7: 
+				case 8: 
+				case 9: 
+					which = ['apple-sized', 'big']; break;
+				case 10: 
+				case 11: 
+				case 12: 
+					which = ['melon-sized', 'giant', 'massive', 'huge', 'impressive', 'fat']; break;
+				case 13: 
+				case 14: 
+				case 15: 
+					which = ['bowling ball sized', 'cannonball sized']; break;
+			}
+			
+			return which[randomIntFromInterval(0, which.length-1)];
+		},
+		getDickAdjective:function(){ // I had fun doing this list
+			var which;
+			switch (GAME.currentMonster.dicksize){ // TODO: get this list to 10 items per line
+				case 4:
+				case 5:
+					which = ['tiny', 'thumb-sized', 'small', 'puny', 'petite', 'very small', 'minuscule', 'passable', 'undersized', 'mini']; break;
+				case 6:
+				case 7:
+					which = ['small', 'average', 'decent', 'nice', 'thin', 'short', 'medium-sized', 'medium', 'passable', 'fair-sized', 'short and sweet']; break;
+				case 8:
+				case 9:
+					which = ['big', 'fat', 'thick', 'beefy', 'decent', 'big-sized', 'nice', 'above average', 'pretty big', 'fat and thick']; break;
+				case 10:
+				case 11:
+				case 12:
+					which = ['enormous', 'giant', 'fat', 'massive', 'huge', 'footlong', 'oversized', 'mammoth', 'hole-stretching', 'impressive']; break;
+				case 13:
+				case 14:
+				case 15:
+					which = ['footlong', 'giant', 'impossibly big', 'massive', 'humongous', 'enormous', 'ginormous', 'gargantuan', 'tremendous', 'colossal', 'titanic']; break;
+			}
+			
+			return which[randomIntFromInterval(0, which.length-1)];
+		}
+	};
+	function functionButtonfuckVaginal(){ // TODO: debug, remove after done
+		fuck (feralWolf, 'vagina');
+	};
+	
+	/**
+	* Does all the math for the fucking (or passes it ahead), then:
+	* 1- Applies special effects for the monster
+	* 2- Should not apply the special effect of the scene? TODO: figure this out
+	* 3- This is where the stretching is calculated, YET this is not where the skill should increase TODO: figure this out too
+	*
+	* @param partner - the monster OBJECT (can't emphasize this enough), probably will always be GAME.currentMonster outside of special events and post-defeat rape
+	* @param where - a string, either 'vagina' or 'ass'. Validated, panics out if not one of these and proceeds to assume the ass TODO: Will the player ALWAYS have an ass? Might change it to assume mouth later?
+	*
+	* @ TODO: Figure out where in the code structure this needs to be passed to and adapt it
+	* @ TODO: Figure out a more unique name (tentatively, simulateSex?) for it to make it easier for those who don't know the code to ctrl+f for it
+	*/
+	function fuck (partner, where) {
+		// validating the where parameter
+		if (!(where === 'ass' || where === 'vagina')){
+			alert("BUG ALERT! READ EVERYTHING IN CAPS CAREFULLY! Some piece of bad code (bad, bad code, no treat for you) told the monster to fuck you somewhere that wasn't the ass or the vagina! Assuming they meant your ass, if you don't have an asshole THE GAME MIGHT BREAK SO DO NOT OVERWRITE YOUR SAVE AND REPORT THIS AS SOON AS POSSIBLE!");
+			where = 'ass';
+		};
+		
+		var p = GAME.p;
+		partner.generateNew();
+		var ifCame = false;
+		// text
+		// change p
+		// ???
+		
+		p.addLust(1);
+		if (p.lust > 100) { // if player came TODO: Make this a function, maybe? If there's need to use it in more than one place, then yes
+			p.changeLustToAfterOrgasm(); // some lust remains, only when you sleep with some toys it goes back to 0 // TODO: Is this a good idea? Sounds good on paper, needs testing.
+			ifCame = true;
+			
+			p.addAddiction(5);
+			p.addTired(-3);
+			
+			GAME.interface.addText(p.texts.generateOrgasmText());
+		};
+		
+		
+		
+		//p.cash += p.applyCashUpgrades(((p.inHeat()) ? (cash * 2) : cash)); // double cash in heat
+		
+		
+		// Filling player up and checking for overflow
+		
+		// TODO: Pass these calculations to a function? If for some reason there's need to use it in more than one place, then yes, otherwise we're trading code understandability for cleanliness and i kinda prefer the first
+		// TODO: Better math for gameplay reasons? At the moment your average feral wolf cums between 8 and 20ml, and the player can take 500ml, this means 500/14 = ~38 fucks to get completely filled, this would make the game VERY repetitive.
+		var cumAmount = 0;
+		cumAmount += ((p.ifCame) ? (partner.ballsize * 5) : (partner.ballsize * 4)); // extra cum if player came
+		cumAmount += ((p.inHeat()) ? (partner.ballsize * 2) : 0) // extra cum in heat
+		cumAmount = p.applyCumUpgrades(cumAmount); // apply upgrades that affect cum
+		
+		p.addCum(where, cumAmount, partner.uniqueName);
+		
+		//////////////////////////////////////////////////////////////
+		// soreness // TODO: PASS THESE TO SKILL-INCREASE-RELATED FUNCTIONS
+		var sorenessBase = (where == 'vagina') ? 0.2 : 0.3; // more soreness if taking it in the ass
+		sorenessBase -= (p.inHeat()) ? 0.1 : 0; // Less soreness during heat
+		p.soreness[where] += sorenessBase * partner.dicksize; 
+		//////////////////////////////////////////////////////////////
+		
+		
+		
+		
+		//////////////////////////////////////////////////////////////
+		// pregnancy
+		if (p.canGetPregnantFrom[where] && p.inHeat()){
+			var addedChance = Math.floor(p.cumInside[where].amount / 10);
+			if (randomBetween(0, 100) < (p.basePregnancyRate + addedChance)){
+				p.startPregnancy(partner, where);
+			};
+		};
+		//////////////////////////////////////////////////////////////
+		
+		
+		
+		
+		
+		//////////////////////////////////////////////////////////////
+		// tiredness // TODO: pass this to adventure code to treat cases like running away
+		p.addTired(1);
+		//////////////////////////////////////////////////////////////
+		
+		GAME.p = p;
+		console.log(GAME.p);
+	}
+	
+	var buttons = document.getElementById('buttonArea');
+	var buttonFuckVaginal = document.createElement('button');
+		buttonFuckVaginal.innerHTML = "Fuck vagina";
+		buttons.appendChild(buttonFuckVaginal);
+		buttonFuckVaginal.onclick = functionButtonfuckVaginal;
+	
+	var demonDog = {
+		minBallSize:4, maxBallSize:12,
+		minDickSize:8, maxDickSize:15,
+		analChance:10,
+		uniqueName:'redDemonDog',
+		longName:'demon dog',
+		generateNew:function(){
+			this.ballsize = randomIntFromInterval(this.minBallSize, this.maxBallSize);
+			this.dicksize = randomIntFromInterval(this.minDickSize, this.maxDickSize);
+		},
+		
+		texts:{
+			playerspottedmonster:
+			[
+				{
+					text:function(){return 'In the distance, you see a red strong-bodied demon with a dog-shaped face. It has horns that curve behind its head and end pointing forward. With each breath of its muscled chest, a cloud of smoke comes out. Approaching it carefully, you see that it has a '+GAME.currentMonster.getDickAdjective()+' member and a pair of '+GAME.currentMonster.getBallAdjective()+' balls. It still hasn\'t seen you, so you could easily flee.';}
+				}
+			],
+			monsterspottedplayer:[
+				{
+					text:function(){return 'You hear a noise behind you, but before you can even start to turn, a very heavy creature falls on top of you, wrapping a strong arm around you as you feel a '+GAME.currentMonster.getDickAdjective()+' dick pressed against your backside.';}
+				},
+				{
+					text:function(){return 'You hear a noise behind you and as you turn you see a big red creature pouncing you. It falls heavily on top of you, wrapping a strong arm around you as you feel a '+GAME.currentMonster.getDickAdjective()+' cock pressed against your belly.';}
+				}
+			],
+			neutral:
+			[
+				{
+					text:function(){return 'As you walk you see something coming out of the shadows. A red anthro demon dog with a body far bigger than yours and almost impossibly strong walks in your direction, grinning and blowing a heart-shaped smoke circle in your direction. It\'s loincloth slips to a side, letting you catch a glimpse of its '+GAME.currentMonster.getDickAdjective()+' dick and '+GAME.currentMonster.getBallAdjective()+' balls. Fleeing won\'t be easy, but you could still fight or submit.';}
+				}
+			],
+			analsex:
+			[
+				{
+					text:function(){return 'todo';},
+					specialEffect:doesNothing
+				}
+			],
+
+			vaginalsex:
+			[
+				{
+					text:function(){return 'The demon pins you under his body, groping your breasts as it lines his '+		GAME.currentMonster.getDickAdjective()		+' cock with your '+		GAME.p.getVaginaDescription()		+' cunt and pushes it until it bottoms out. You scream as it stretches you, the canine knot at the base trying to push its way into you, brushing against your button before he draws out and pushes hard a second time. As the beast picks up a steady pace for breeding you, you can\'t help but enjoy it. Quite gently, at least for a demon, it '+		(GAME.p.hasBreasts() ? 'gropes your breasts, nibbling them and your neck' : 'bites down on your neck, holding you')		+' as his knot slowly but steadily makes progress in stretching you with each wet slap. As it finally stretches you to allow its knot to enter, you can feel the beast digging its claws into you as its almost burning-hot seed fills your belly in inhumanly strong sprays, the warm feeling deep inside you assuring your womb is well-filled'+		(GAME.p.inHeat() ? ', his '+GAME.currentMonster.getDickAdjective()+' tool stabbing against the end of your '+GAME.p.getVaginaDescription()+' satisfying a hunger deep inside you. ' : '. ')		+'After grinding itself against you for a while, his member pulsing slightly, its knot deflates and the demon pulls out, its warm seed covering the inner side of your thighs.';},
+					specialEffect:doesNothing
+				}
+			],
+
+			genderneutralsex:
+			[
+				{
+					text:function(){return 'The demon roughly manhandles you, sitting down and pulling you down into its lap, pushing its '+GAME.currentMonster.getDickAdjective()+' cock into your {{HOLE}}, impaling you. It grunts, its sickly-sweet smoke quickly making you feel warm and horny, taking but a moment for you to willingly start to ride him. '+((GAME.currentMonster.dicksize > 12) ? 'Its member is so big you can feel your belly bulging with its size, enticing you to ride even harder, all the way down. ' : '')+'Noticing your enthusiasm, it bites down onto your neck, its breathing becoming more heavy and enveloping your face in a cloud of smoke filled with pheromones, leaving your mind hazy and making you lose track of time. Finally, you hear the demon groaning and feel its paws pushing you down strongly against his '+GAME.currentMonster.getDickAdjective()+' cock as it sprays its unholy cum deep into your {{HOLE}}. The demon pats your head and whispers "good bitch" before leaving you to recover, the effects of its pheromones fading away slowly, leaving you wanting more.';},
+					specialEffect:function(){GAME.p.addLust(5);}
+				},
+				
+				{
+					text:'',
+					specialEffect:doesNothing
+				}
+			]
+		}
+	};
+		
+	demonDog.prototype = genericMonster;
+	
+	var feralWolf = {
+		minBallSize:2, maxBallSize:5,
+		minDickSize:5, maxDickSize:9,
+		analChance:70,
+		uniqueName:'feralWolf'
+		longName:'feral wolf',
+		generateNew:function(){
+			this.ballsize = randomIntFromInterval(this.minBallSize, this.maxBallSize);
+			this.dicksize = randomIntFromInterval(this.minDickSize, this.maxDickSize);
+			this.color = (function(){
+				var weirdColors = (randomIntFromInterval(0, 9) == 9);
+				if (weirdColors){
+					switch(randomIntFromInterval(0, 12)){
+						case 0: return 'pink';
+						case 1: return 'green';
+						case 2: return 'black and pink';
+						case 3: return 'golden orange';
+						case 4: this.infection = 'rubber'; return 'black and shiny, rubber-like';
+						case 5: return 'rainbow';
+						case 6: return 'light blue';
+						case 7: return 'scarlet';
+						case 8: return 'metallic gold';
+						case 9: return 'dark blue';
+						case 10: return 'bubblegum pink';
+						case 11: return 'cobalt blue';
+						case 12: return 'transparent, ghost-like'; // TODO: consider infection
+						
+						default: return 'BUG pls report';
+					}
+				}else{
+					switch(randomIntFromInterval(0, 11)){
+						case 0: return 'black';
+						case 1: return 'dark gray';
+						case 2: return 'gray';
+						case 3: return 'light gray';
+						case 4: return 'silver';
+						case 5: return 'white';
+						case 6: return 'brown';
+						case 7: return 'reddish brown';
+						case 8: return 'tan';
+						case 9: return 'dark red';
+						case 10: return 'golden brown';
+						case 11: return 'golden';
+						
+						default: return "BUG pls report";
+					}
+				};
+			})();
+			this.battlename = this.color + ' feral wolf';
+		},
+		
+		texts:{
+			playerspottedmonster:
+			[
+				{
+					text:function(){return 'You hear rustling through the foliage and freeze in place. Waiting, you see a '+GAME.currentMonster.color+'-furred wolf strolling by. Sizing up its potential, you manage to see a pair of '+GAME.currentMonster.getBallAdjective()+' balls with a comparable sheath. It hasn\'t seen you yet, and thanks to the wind, it hasn\'t smelled you yet as well.';}
+				},
+				{
+					text:function(){return 'You hear rustling through the foliage and freeze in place. Waiting, you see a '+GAME.currentMonster.color+'-furred wolf strolling by. Sizing up its potential, you manage to see a pair of '+GAME.currentMonster.getBallAdjective()+' balls. Its red '+GAME.currentMonster.getDickAdjective()+' cock hangs out of its sheath, visibly spitting pre. It hasn\'t seen you yet, and thanks to the wind, it hasn\'t smelled you yet as well.';}
+				}
+			],
+			monsterspottedplayer:[
+				{
+					text:function(){return 'A '+GAME.currentMonster.color+' wolf jumps out of a bush, standing near you and growling. You catch a quick glimpse of its fully hard member and giggle, feeling glad the beast is not looking for a fight.';}
+				},
+				{
+					text:function(){return 'A '+GAME.currentMonster.color+' wolf jumps out of a bush, standing close to you and growling. As it jumps and tries to push you into the ground, you see its '+GAME.currentMonster.getDickAdjective()+' member and '+GAME.currentMonster.getBallAdjective()+' nuts. You push him off to have time to decide what to do, feeling glad it\'s not looking for a fight.';}
+				}
+			],
+			neutral:
+			[
+				{
+					text:function(){return 'You are surprised by a nearby noise, turning and watching as a '+GAME.currentMonster.color+' wolf appears and jumps back, apparently as scared by you as you were by him.';}
+				}
+			],
+			analsex:
+			[
+				{
+					text:function(){return 'The wolf jumps over you, humping without aim, pressing against your butt and covering you in precum before its '+GAME.currentMonster.getDickAdjective()+' member finds your ass, plunging deep into you. You moan in '+(GAME.p.isAddicted() ? 'bliss' : 'pain')+' as it forces your hole open, fucking you savagely, seeking only to fill you with its cum. It doesn\'t takes long before you are panting like him, pushing against its thrusts, enjoying the feeling of its claws digging against your thighs as he holds you in place. You feel its '+GAME.currentMonster.getDickAdjective()+' cock shooting warm, pre deep inside your ass every time its '+GAME.currentMonster.getBallAdjective()+' balls slap against you. '+(GAME.p.isAddicted() ? 'You scream, scaring the beast and making it dig its claws deeper and bite the back of your neck roughly as you really get into it, feeling a strange pleasure from submitting yourself to a feral beast, pushing harder and harder against its thrusts, his knot entering and leaving your asshole with every thrust.' : 'Its knot, inflating with every thrust, enters you and doesn\'t exits afterwards, leaving him a small space to thrust, but the wolf makes the most of it, doubling its pace.')+' Finally, the beast howls as it starts to cum, shivering on top of you as his seed floods your ass. Soon after, the beast, still tied into you, jumps off you, spinning its member inside you as he turns away from you, standing ass to ass with you as he finishes cumming into you, its knot deflating soon after, leaving you feeling well-used.';},
+					specialEffect:doesNothing
+				}
+			],
+
+			vaginalsex:
+			[
+				{
+					text:function(){return 'As you fall on the floor, the '+GAME.currentMonster.color+' wolf quickly pounces on top of you, its claws digging against your thighs as he mounts you. '+(GAME.p.isAddicted() ? 'You slide your hand between your legs, guiding the wolf\'s cock to your '+GAME.p.getVaginaDescription()+', and let off a pleased moan as he plunges into you.' : 'The wolf thrusts blindly for a moment, its '+GAME.currentMonster.getDickAdjective()+' tool finding its way into your cunt.')+' The wolf thrusts fiercely, '+(GAME.p.hasBreasts() ? 'making your tits shake back and forth with each deep movement, ' : '')+'eliciting soft moans from you as he takes you, pleasant tingles rushing through your pussy. It doesn\'t takes long for the thin spurts of watery pre to change to thick, warm jets of cum, the wolf humping even faster as he cums. Its knot, too small to tie properly, slides in and out of your cunt, pressing against your clit with each thrust. The beast rests on top of you for a moment, panting, then licks your face and runs off, its tail wagging.';},
+					specialEffect:doesNothing
+				}
+			],
+
+			genderneutralsex:
+			[
+				{
+					text:function(){return 'todo';},
+					specialEffect:doesNothing
+				}
+			]
+		}
+	};
+	feralWolf.prototype = genericMonster;
+	
+	/*
+	
+	http://en.wiktionary.org/wiki/Wikisaurus:testicles
+	
+	IDEAZ
+	
+	alguma coisa relacionada a ovos? 
+	
+	glitter lion *_* // possible infection??? 8D
+	tribal lions
+	anubis-like jackals with gold cum
+	horses, duh
+	tentacle monsters?
+	a hen with a tie // joke scene obviously porque huehuehuehueheuheuheuheuehueheuheuehuheuehueheuheuheue
+	koalas?
+	lobo guará
+	random encounter in the jungle: capybara with rattlesnake (cascavel) comendo uma casa de madeira e fazendo um buraco, enquanto uma mulher pede ajuda pra um tucano pra espantar ela
+	alien do aliens?
+	
+	
+	Free for taking:
+	ents
+	alraunes? (MALE) Plant monsters in general too, begging for tentacles
+	sergal
+	bears, variations: pandas, arctic, grizzly, black, etc.
+	Slimegirls
+	
+	
+	itens alamdiçoados que causam efeitos: 
+	bra of milk production?
+	TODO: pensar mais nisso
+	
+	//////////////////////////////////////////////////
+	// INFECTIONS:
+	4 types:
+	skin: Changes overall skin appearance: leather, rubber, gel (variations: pudding (random giga-puddi encounter?), chocolate?)?, scales, glass, metals (mercury, gold, silver, etc etc. provavelmente implementar usando o mesmo esquema de cor do lobo, só trocando o termo na frase)
+	Shape: Body shape, fox, feline, etc. etc.
+	Tail?
+	Head?
+	Wings?
+	Possivelmente salpicar eventos pra lá e pra cá, pra por exemplo, quando o cara tiver com infecção de borracaha ele não poder equipar armas porque as mãos viraram mittens (possivelmente curar isso com uma poção fácil de conseguir, ams sem perder a transformação?)
+	
+	random gangbangs?
+	
+20:51 - AEykzel: imagina um tipo de lupino, com rosto um tanto mais were a lupino que o usual, bulge absurdamente grande comparado a e um físico mais forte que o usual, mas sem fugir do conceito hound; a cum dele é mais espessa que a cum usual e tem propriedades were em "humanos" ou seres anthros; also tendência a dar rape em qualquer anthro que se aproxime e atacar em bando, because yayz for gangbang <3
+
+	nisharu:
+	75% ass chance
+	plate armor pro corpo e pra parte taur, com a bunda desprotegida e uma espada comum
+	'You see something very close to you and hide. Taking a careful closer look, you can see a brown taur creature... A fox, judging by the fluffy tail that moves slightly. Moving a bit around it you see a thick, heavy-looking set of plate mail covering his chest and most of his back. He also has a sheated sword close to his hand, convincing you that a battle would be considerably hard. Its hind legs and butt are completely uncovered, however, letting you take a glimpse at his '+GAME.currentMonster.getDickAdjective()+'. '+(randomIntFromInterval(0,1) == 1 ? 'As you are sizing up his balls, his tail swishes to a side and you can\'t help but notice that his asshole looks like a very constantly used one. ' : '')+' You can\'t see his member from where you are, and moving around would be too dangerous as the beast seems very alert.'
+	when m surps p, allow battle
+	versão com roupa de borracha, infecciosa, brown, blue and green
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	*/
+	
+	document.addEventListener("DOMContentLoaded", function(event) {
+		GAME.init();
+	});
+	
+	</script>
+	<script src="player.js"></script>
+	<script src="main.js"></script>
+	<script src="interface.js"></script>
+	<script src="battle.js"></script>
+</body>
+</html>

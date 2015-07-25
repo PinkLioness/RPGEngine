@@ -1,0 +1,162 @@
+Based on:
+http://www.gamasutra.com/view/feature/3384/the_anatomy_of_a_design_document_.php
+
+Introduction:
+First of all, everything marked as tentative either needs to be tested in actual gameplay, as the ideas seem solid but might play terrible, or is a part of the story that's secondary and might change.
+
+This is a text RPG. You start in a town with shops and can go adventuring to meet monsters, random events and maybe dungeons, which are a possible addition to the Dream Version.
+When you go adventuring, you get fucked by monsters. You store cum in your body and go back to town to sell it for cash. Cash buys more equipment so you can take on harder monsters, which give higher payouts or larger amounts of cum.
+Some monsters are not willing, so you will need to force them in battle to have sex with you. Others may have sex with you for cash, items, etc.
+
+
+
+Key features:
+	EXTREME EASE OF MAKING NEW MONSTERS AND EVENTS. No matter the amount of effort on the coder's side, the ease of gathering player-provided content MUST take priority as it will be invaluable. This will require a good advertising campaign to gather support, but if we can get 20 persons to make 2 monsters each, we will be rich in content. Also, the potential for taking commissions so we can program complex characters like someone's fursona.
+	Focus on many monsters and many different scenes, instead of few, greatly developed characters. If someone fancies a monster, make it easy for them to add more scenes and complexity to it.
+	Incremental gameplay, where each upgrade allows you to get more money faster so you can buy the more expensive upgrades faster.
+	Infection system inspired by Flexible Survival. As infections progress, they give you good and bad effects. Being transformed into a being made of rubber, for example, slows how quickly you gain strenght, but makes getting more dexterity a breeze; Tails may add to your attack power, but lower your defense as it's another area to hit; And so on. See Infection later in the document for more details. Removed by
+	Not punishing gameplay. The PC cannot die, nor does shi take gold along with to adventures, so it cannot be lost. The 'worst' thing that can happen is fainting and waking up to find out your PC is pregnant, infected with 3 different infections and hir pussy can now hold half a liter more of cum.
+	Hard end-game. 90% of the monsters range from pushovers to 'able to be beat around 50% of times by an unprepared player'. The bosses and the last few, which you will not be able to submit to, probably hypermuscle furs, dragons, giant beasts and the such, will require planning, usage of buff potions if they make the cut, good stats, beneficial infections, etc etc. Obviously, the first bosses will be EASY. Rewards may range from 100% chance of getting a highly beneficial infection like hyperfur mode, new weapons/armor, items and perks otherwise unavailable, and in the case of the dragon, access to its treasure hoard.
+	Elder Scrolls-like skill increase system. Want to raise strenght? Hit stuff harder. Dexterity? Dodge stuff more. Speed? Run away a few times. How much cum your belly holds? Fill it past its limit. See Skill increase later.
+
+
+
+General rules: (obviously everything here is subject to change based on feedback)
+	You start in a town.
+	You can go: Shopping, adventuring, to sleep (see below)
+	Your stats have a random formula average to a value, the average attack power. See Stats & Stat formula
+	You cannot let your sex addiction (which gives or blocks access to certain events, don't abuse this too much if the situation doesn't really calls for it) get over 100. This is the only way to lose the game, thus display it with some destaque. TODO: Think on a good way to reduce this
+	
+
+
+
+Battle rules:
+	In attacks, the attack power is randomized each round and thus varies slightly. 20-5% depending on weapon type. Random weapons with enchantments that change their stats are found in 'goody huts' (See Adventuring). Display these stats Diablo-style.
+	Monsters have an attack power that is randomized per turn as well. Tentative example: A feral wolf (first area easy enemy) has a randomized at encounter value between 6 and 11 that's randomized by -5 to 5 per turn. It might be overwhelmingly strong or have 1/10th of the strenght of the player. Tentative example 2: A hard, rare enemy might have 7/10s to 170% of a new player's strenght.
+
+
+Difficulty
+	We'll have to repeat monsters for a while... Some generic stuff that's mostly grind fodder like the wolf, in variants fitting with the map area, might be good for this.
+
+	IMPORTANT: To test and adapt difficulty, write tests, like "player should win 80% of the battles against enemy x if player has the following stats" and fine tune the monster based on the results of running that test 10000 times or something like that.
+	
+	Monsters should have (VERY tentative) ~40% of the players health?
+	You start with 10 average attack power. Good equipment gets it to 15.
+	1st area monsters aap should be between 1-13. 1st boss has 15. Equipment should be at most +5 WHEN ALL ARE EQUIPPED.
+	2nd area: 8-20, boss has 22. Equipment up to +8
+	3rd area: 14-26, boss has 30. Equipment up to +11
+	4th area: 21-34, boss has 38. Equipment up to +15
+	5th area: 30-50, boss has 45. Equipment up to +20
+	6th area: 40-51, boss has 55. Equipment up to +25
+	7th area: 51-63, boss has 64. Equipment up to +33 - Big increase, make sure it makes sense considering the story, maybe nippon steel folded a thousand times
+	8th area: 58-69, boss has 75. Equipment up to +36
+	9th area: 65-92, boss has 85. Equipment up to +40
+	10th area: 75-90, boss has 100. Equipment up to +45, have at least one special item with +50, random encounters with 90, 110, 120, 125, 130, 150 bosses.
+
+
+Adventuring:
+	When you go adventuring, you walk through a 2D map whose layout is generated randomly. Each room may have 4 exits, north, south, east and west. Up and down may be used in the future for special rooms. Each room can contain monsters of only ONE type, which probably will not wander across the map due to having to implement AI, treat monsters of two types that want to go into the same room and such. When you are defeated in battle or submit, the remaining monsters will either gangbang you, if such a special scene is programmed, or fuck you in order/mouth if monster has mouth scenes. See the Battle section for more details.
+	A map is not provided initially, but after two or three adventures you might buy a cheap item that works as one forever. Tentative: The dungeons require its own maps, maybe found inside it, maybe in events, maybe from quests.
+	
+	Rarely the map generation (Tentative: 1/7) makes "goody huts" that give a bonus, holding a chest with a weapon or gold or dungeon maps or whatever.
+
+
+
+Shopping:
+The town has a few shops, the potion shop, weaponsmith, armorsmith and general store:
+
+	Potion shop:
+		This is maybe the most important place in the game, as here you sell cum off you and make money. Tentative: The intro happens here.
+		Here is also where you take on random quests, which require you to fetch a certain amount of a specific type of cum. The payout is money or potions that are useful to all kinds of players, like healing.
+		When you bring the cum of specific monsters, you might choose to make one of many special potions with it, instead of receiving payment. Usually these monsters will be rare, or the amount of cum quite high, to make these items hard to get, as the bonuses they give are also very good. Examples are a potion that instantly trains one of your stats or stretches your holes, allowing you to carry more cum at once. This is the only way to get rid of infections. TODO later: Think more on these.
+		You might also purchase simple potions to heal soreness, give health, give timed bonuses (tentative), etc. TODO later: Think more on these.
+		
+		
+	Armorsmith:
+		Owned by Ezra, the purple and orange catfox.
+		Sells items that raise your defensive power.
+		
+		Tentative: Extra body parts like tails and wings and extra limbs and taur bodies will reduce the defense of armor until you pay to have it adapted. Taur bodies cost more to adapt, might add a good health boost and damage when equipped with spears as you'll be able to work like a knight but better(tm)
+
+
+Stats & Stat Formula:
+	Strenght
+	Dexterity
+	Intelligence
+	Wisdom
+	Speed
+	Constitution
+	Sexuality (Tentative, Lowers soreness increase)
+	Luck - Affects everything you do that involves randomness. The more you have, the bigger the effect. This means the more you have, the harder you fail when fortune turns its back on you. Raised by getting critical hits or failures. Able to be disabled via upgrade. TODO: Code that upgrade.
+
+	ALL OF THE FORMULAS ARE TENTATIVE AND SUBJECT TO CHANGE
+	Luck formula:
+	Tentative: 60% chance of +5% of luck, 20% chance of +25% of luck, 5% chance of +100% of luck, 10% of -10% of luck, 5% of -50% of luck
+
+	Formula for physical attack power: AP = total equipment attack power + 0-25% strenght + 0-5% dexterity + 0-20% wisdom + luck formula
+	Formula for magical attack power: AP = total equipment AP + 0-5% dexterity + 0-25% intelligence + 0-20% wisdom + luck formula
+	Formula for defense power: AP = total equipment defense power + 0-10% dex + 0-10% int + 0-10% wis + 10-20% const + luck formula
+
+	Increasing Stats:
+		There are two ways to increase your stats:
+		Paying trainers to get a whole point. This is mostly to be used for catching up stats
+		Using the stats. When using them, you get points. These points result in level ups for the stats. The formula is not yet defined but will follow this formula, changing the 1.5 and the scale: pointsToLevel = ((currentLevel * gameSpeed * scale) ^ 1.5) * 10.
+		The scale will possibly be dynamic for some stats. High body weight means a lower scale for raising strenght, for example.
+		Game speed is set at the start of the game. It ranges from 0.1 to 10.
+
+		The following table says what you need to do to get points. TODO: Add more to this whenever it makes sense?
+		Strenght - Hitting monsters.
+		Dexterity - Dodging attacks
+		Intelligence - Casting spells?
+		Wisdom - No idea.
+		Speed - Running away.
+		Constitution - Losing health.
+		Slutting - Duh.
+		Luck - Getting critical hits or failures.
+
+
+
+Sleeping:
+	Restores 250 health
+	Restores 80 fatigue
+	Raises 5 lust
+	Costs 2 gold
+	Advances infections and pregnancy
+	Removes some amount of cum from inside you, come back here when I have an idea of the value of each cum type. Using plugs can stop this.
+
+	Can be raised to 350/400/500, 85/90/95 and 75/80/90, second upgrade in each stat adds 1 gold to sleep cost, up to a total cost of 5. Rare random event (1/100 adventures) makes it as you find a ring. You touch it, it disappears and whenever you sleep a small purse with enough appears near you. The purse disappears as you touch it, leaving only the coins. Add random event with a burglar who tries to steal it as you sleep, only to be petrified.
+	
+	You can buy pets/toys to have sex with before sleeping. These can vary. For example: dildo/vibrator, sybian, fleshlight, goblins, dogs, horses, lizards / dragons, big felines, red panda, snakes, tentacle beasts, geese, potatoes, succubi/incubi, be these male, female, herm or whatever you want. Find an enchanted dildo that spawns some spiritual beast(s?) to have sex with you.
+	Whe using a pet/toy, your lust lowers instead. The more expensive, the more it lowers.
+
+
+
+Story:
+	VERY Tentative
+	Young warrior in a viking-like society based in Scandinavia.
+	He and the alchemist cure a noble in a random event that happens as he tries to go into an adventure when player reaches 20 average strenght TODO: Define this, though this is important for the finished game only
+	Go through towns and ages, doing a gentle parody of their societies:
+		Scandinavia in ~1100, cold tundra & forest
+		Britain, somewhere with Celts, forest & plains
+		Spain (while ruled by the Arabs?), hills & plains? Maybe a river area?
+		Venice at the peak of the merchant rule, swamps & ocean?
+		Constantinople, join the Varangian Guard, caatinga and rocky hilly desert
+		Egypt, peak of its empire, sandy desert, pyramids
+		Deep African jungle? Maybe India so we can include nepal and its mountains? If India, switch Mayan and China around
+		Mayan empire, human sacrifices, mountainous jungle & high mountains
+		Japan / China?
+		Siberia?
+
+	go on a journey through europe, going to constantinople to heal a king, then forth as adventurer?
+
+
+
+Trivia / in-game jokes / non-serious section:
+	Number stations in goody hut radios. Do something about it.
+	Die Antwoord reference: Either an event about the fatty boom boom video or maybe find a house in the middle of nowhere with a dead anthro white female cat covered in blood inside it, along with an anthro black female cat laying in a bed, being fucked by a pit bull. (Randomize their sex <3?)
+	Konami Code
+
+
+Random things:
+	Add an option hard-set to each savegame, changeable with a simple exported save game edit option, to change game skill increase speed between 0.1, 0.5, 0.8, 1.0, 1.5, 3.0 and 10.0 (Instant, Tourist, Quick, Normal, Long, Epic, Vacation from Real Life), easy and pleases every-fucking-one
+	NO COPYRIGHTED MONSTERS BECAUSE COPYRIGHTS IF MONEY IS TO EVER BE MADE OFF THIS
