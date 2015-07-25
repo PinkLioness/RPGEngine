@@ -67,94 +67,7 @@
 	}
 	
 
-	var genericMonster = {
-		// These define the battle power of the beast.
-		// The battle power in this case can be any number between 6 and 15, and for every attack a number between negative variationBattlePower and positive variationBattlePower is added to it.
-		// battlePower is left undefined as it MUST always be set in the initialization
-		minBattlePower:6, maxBattlePower:15, variationBattlePower:5, battlePower: undefined,
-		// These two are the actual values used after initialization
-		ballsize:3,
-		dicksize:3,
-		// These are the minimum / maximum values, used for randomization during initialization
-		minBallSize:1, maxBallSize:11,
-		minDickSize:4, maxDickSize:14,
-		// 10 = 10% chance of going for the ass when both holes are there, float values like 2.5 should work, didn't test it too much
-		analChance:50,
-		// This is ALWAYS applied after sex, even if you got a special scene with a special effect too
-		specialEffectOnSex:doesNothing,
-		texts:{
-			// If these texts are used, the monster does not have texts set for the particular encounter version.
-			playerspottedmonster:['Debug text if you see this you saw a bug - player'],
-			monsterspottedplayer:['Debug text if you see this you saw a bug - monster'],
-			neutral:['Debug text if you see this you saw a bug - neutral'],
-			
-			// These 3 functions should work for all normal cases, really
-			// I mean, you might want to overwrite them if your monster has special intros for female players or whatever that's different from "get a random line from all available", ask me if you need more info.
-			getplayerspottedmonsterText:function(){return GAME.currentMonster.playerspottedmonster[randomIntFromInterval(0, GAME.currentMonster.playerspottedmonster.length-1)];},
-			getmonsterspottedplayerText:function(){return GAME.currentMonster.monsterspottedplayer[randomIntFromInterval(0, GAME.currentMonster.monsterspottedplayer.length-1)];},
-			getneutralText:function(){return GAME.currentMonster.neutral[randomIntFromInterval(0, GAME.currentMonster.neutral.length-1)];}
-		},
-		generateNew:function(){ // This gets called when you encounter the monster, the intention is to use it for randomization.
-			GAME.currentMonster.ballsize = randomIntFromInterval(GAME.currentMonster.minBallSize, GAME.currentMonster.maxBallSize);
-			GAME.currentMonster.dicksize = randomIntFromInterval(GAME.currentMonster.minDickSize, GAME.currentMonster.maxDickSize);
-			
-			// TODO: Make this dispatch a "monsterGenerated" event.
-			// TODO: Create event
-			// TODO: Add event to custom monster generators
-			// TODO: Remove custom generators that do EXACTLY what this function does
-		},
-		getBallAdjective:function(){ // This function CAN be overwritten if you want to, just make it return a string and all's good
-			var which;
-			switch (GAME.currentMonster.ballsize){ // TODO: get this list to 10 items per line
-				case 1: 
-				case 2: 
-				case 3: 
-					which = ['tiny','grape-sized', 'petite', 'undersized', 'small']; break;
-				case 4: 
-				case 5: 
-				case 6: 
-					which = ['small', 'average', 'plum-sized', 'strawberry-sized', 'golfball-sized', 'medium', 'medium-sized']; break;
-				case 7: 
-				case 8: 
-				case 9: 
-					which = ['apple-sized', 'big']; break;
-				case 10: 
-				case 11: 
-				case 12: 
-					which = ['melon-sized', 'giant', 'massive', 'huge', 'impressive', 'fat']; break;
-				case 13: 
-				case 14: 
-				case 15: 
-					which = ['bowling ball sized', 'cannonball sized']; break;
-			}
-			
-			return which[randomIntFromInterval(0, which.length-1)];
-		},
-		getDickAdjective:function(){ // I had fun doing this list
-			var which;
-			switch (GAME.currentMonster.dicksize){ // TODO: get this list to 10 items per line
-				case 4:
-				case 5:
-					which = ['tiny', 'thumb-sized', 'small', 'puny', 'petite', 'very small', 'minuscule', 'passable', 'undersized', 'mini']; break;
-				case 6:
-				case 7:
-					which = ['small', 'average', 'decent', 'nice', 'thin', 'short', 'medium-sized', 'medium', 'passable', 'fair-sized', 'short and sweet']; break;
-				case 8:
-				case 9:
-					which = ['big', 'fat', 'thick', 'beefy', 'decent', 'big-sized', 'nice', 'above average', 'pretty big', 'fat and thick']; break;
-				case 10:
-				case 11:
-				case 12:
-					which = ['enormous', 'giant', 'fat', 'massive', 'huge', 'footlong', 'oversized', 'mammoth', 'hole-stretching', 'impressive']; break;
-				case 13:
-				case 14:
-				case 15:
-					which = ['footlong', 'giant', 'impossibly big', 'massive', 'humongous', 'enormous', 'ginormous', 'gargantuan', 'tremendous', 'colossal', 'titanic']; break;
-			}
-			
-			return which[randomIntFromInterval(0, which.length-1)];
-		}
-	};
+	
 	function functionButtonfuckVaginal(){ // TODO: debug, remove after done
 		fuck (feralWolf, 'vagina');
 	};
@@ -179,7 +92,7 @@
 		};
 		
 		var p = GAME.p;
-		partner.generateNew();
+		partner.generateNew(); // DEBUG
 		var ifCame = false;
 		// text
 		// change p
@@ -242,7 +155,7 @@
 		//////////////////////////////////////////////////////////////
 		
 		GAME.p = p;
-		console.log(GAME.p);
+		console.log(GAME.p); // DEBUG
 	}
 	
 	var buttons = document.getElementById('buttonArea');
@@ -251,172 +164,7 @@
 		buttons.appendChild(buttonFuckVaginal);
 		buttonFuckVaginal.onclick = functionButtonfuckVaginal;
 	
-	var demonDog = {
-		minBallSize:4, maxBallSize:12,
-		minDickSize:8, maxDickSize:15,
-		analChance:10,
-		uniqueName:'redDemonDog',
-		longName:'demon dog',
-		generateNew:function(){
-			this.ballsize = randomIntFromInterval(this.minBallSize, this.maxBallSize);
-			this.dicksize = randomIntFromInterval(this.minDickSize, this.maxDickSize);
-		},
-		
-		texts:{
-			playerspottedmonster:
-			[
-				{
-					text:function(){return 'In the distance, you see a red strong-bodied demon with a dog-shaped face. It has horns that curve behind its head and end pointing forward. With each breath of its muscled chest, a cloud of smoke comes out. Approaching it carefully, you see that it has a '+GAME.currentMonster.getDickAdjective()+' member and a pair of '+GAME.currentMonster.getBallAdjective()+' balls. It still hasn\'t seen you, so you could easily flee.';}
-				}
-			],
-			monsterspottedplayer:[
-				{
-					text:function(){return 'You hear a noise behind you, but before you can even start to turn, a very heavy creature falls on top of you, wrapping a strong arm around you as you feel a '+GAME.currentMonster.getDickAdjective()+' dick pressed against your backside.';}
-				},
-				{
-					text:function(){return 'You hear a noise behind you and as you turn you see a big red creature pouncing you. It falls heavily on top of you, wrapping a strong arm around you as you feel a '+GAME.currentMonster.getDickAdjective()+' cock pressed against your belly.';}
-				}
-			],
-			neutral:
-			[
-				{
-					text:function(){return 'As you walk you see something coming out of the shadows. A red anthro demon dog with a body far bigger than yours and almost impossibly strong walks in your direction, grinning and blowing a heart-shaped smoke circle in your direction. It\'s loincloth slips to a side, letting you catch a glimpse of its '+GAME.currentMonster.getDickAdjective()+' dick and '+GAME.currentMonster.getBallAdjective()+' balls. Fleeing won\'t be easy, but you could still fight or submit.';}
-				}
-			],
-			analsex:
-			[
-				{
-					text:function(){return 'todo';},
-					specialEffect:doesNothing
-				}
-			],
-
-			vaginalsex:
-			[
-				{
-					text:function(){return 'The demon pins you under his body, groping your breasts as it lines his '+		GAME.currentMonster.getDickAdjective()		+' cock with your '+		GAME.p.getVaginaDescription()		+' cunt and pushes it until it bottoms out. You scream as it stretches you, the canine knot at the base trying to push its way into you, brushing against your button before he draws out and pushes hard a second time. As the beast picks up a steady pace for breeding you, you can\'t help but enjoy it. Quite gently, at least for a demon, it '+		(GAME.p.hasBreasts() ? 'gropes your breasts, nibbling them and your neck' : 'bites down on your neck, holding you')		+' as his knot slowly but steadily makes progress in stretching you with each wet slap. As it finally stretches you to allow its knot to enter, you can feel the beast digging its claws into you as its almost burning-hot seed fills your belly in inhumanly strong sprays, the warm feeling deep inside you assuring your womb is well-filled'+		(GAME.p.inHeat() ? ', his '+GAME.currentMonster.getDickAdjective()+' tool stabbing against the end of your '+GAME.p.getVaginaDescription()+' satisfying a hunger deep inside you. ' : '. ')		+'After grinding itself against you for a while, his member pulsing slightly, its knot deflates and the demon pulls out, its warm seed covering the inner side of your thighs.';},
-					specialEffect:doesNothing
-				}
-			],
-
-			genderneutralsex:
-			[
-				{
-					text:function(){return 'The demon roughly manhandles you, sitting down and pulling you down into its lap, pushing its '+GAME.currentMonster.getDickAdjective()+' cock into your {{HOLE}}, impaling you. It grunts, its sickly-sweet smoke quickly making you feel warm and horny, taking but a moment for you to willingly start to ride him. '+((GAME.currentMonster.dicksize > 12) ? 'Its member is so big you can feel your belly bulging with its size, enticing you to ride even harder, all the way down. ' : '')+'Noticing your enthusiasm, it bites down onto your neck, its breathing becoming more heavy and enveloping your face in a cloud of smoke filled with pheromones, leaving your mind hazy and making you lose track of time. Finally, you hear the demon groaning and feel its paws pushing you down strongly against his '+GAME.currentMonster.getDickAdjective()+' cock as it sprays its unholy cum deep into your {{HOLE}}. The demon pats your head and whispers "good bitch" before leaving you to recover, the effects of its pheromones fading away slowly, leaving you wanting more.';},
-					specialEffect:function(){GAME.p.addLust(5);}
-				},
-				
-				{
-					text:'',
-					specialEffect:doesNothing
-				}
-			]
-		}
-	};
-		
-	demonDog.prototype = genericMonster;
 	
-	var feralWolf = {
-		minBallSize:2, maxBallSize:5,
-		minDickSize:5, maxDickSize:9,
-		analChance:70,
-		uniqueName:'feralWolf'
-		longName:'feral wolf',
-		generateNew:function(){
-			this.ballsize = randomIntFromInterval(this.minBallSize, this.maxBallSize);
-			this.dicksize = randomIntFromInterval(this.minDickSize, this.maxDickSize);
-			this.color = (function(){
-				var weirdColors = (randomIntFromInterval(0, 9) == 9);
-				if (weirdColors){
-					switch(randomIntFromInterval(0, 12)){
-						case 0: return 'pink';
-						case 1: return 'green';
-						case 2: return 'black and pink';
-						case 3: return 'golden orange';
-						case 4: this.infection = 'rubber'; return 'black and shiny, rubber-like';
-						case 5: return 'rainbow';
-						case 6: return 'light blue';
-						case 7: return 'scarlet';
-						case 8: return 'metallic gold';
-						case 9: return 'dark blue';
-						case 10: return 'bubblegum pink';
-						case 11: return 'cobalt blue';
-						case 12: return 'transparent, ghost-like'; // TODO: consider infection
-						
-						default: return 'BUG pls report';
-					}
-				}else{
-					switch(randomIntFromInterval(0, 11)){
-						case 0: return 'black';
-						case 1: return 'dark gray';
-						case 2: return 'gray';
-						case 3: return 'light gray';
-						case 4: return 'silver';
-						case 5: return 'white';
-						case 6: return 'brown';
-						case 7: return 'reddish brown';
-						case 8: return 'tan';
-						case 9: return 'dark red';
-						case 10: return 'golden brown';
-						case 11: return 'golden';
-						
-						default: return "BUG pls report";
-					}
-				};
-			})();
-			this.battlename = this.color + ' feral wolf';
-		},
-		
-		texts:{
-			playerspottedmonster:
-			[
-				{
-					text:function(){return 'You hear rustling through the foliage and freeze in place. Waiting, you see a '+GAME.currentMonster.color+'-furred wolf strolling by. Sizing up its potential, you manage to see a pair of '+GAME.currentMonster.getBallAdjective()+' balls with a comparable sheath. It hasn\'t seen you yet, and thanks to the wind, it hasn\'t smelled you yet as well.';}
-				},
-				{
-					text:function(){return 'You hear rustling through the foliage and freeze in place. Waiting, you see a '+GAME.currentMonster.color+'-furred wolf strolling by. Sizing up its potential, you manage to see a pair of '+GAME.currentMonster.getBallAdjective()+' balls. Its red '+GAME.currentMonster.getDickAdjective()+' cock hangs out of its sheath, visibly spitting pre. It hasn\'t seen you yet, and thanks to the wind, it hasn\'t smelled you yet as well.';}
-				}
-			],
-			monsterspottedplayer:[
-				{
-					text:function(){return 'A '+GAME.currentMonster.color+' wolf jumps out of a bush, standing near you and growling. You catch a quick glimpse of its fully hard member and giggle, feeling glad the beast is not looking for a fight.';}
-				},
-				{
-					text:function(){return 'A '+GAME.currentMonster.color+' wolf jumps out of a bush, standing close to you and growling. As it jumps and tries to push you into the ground, you see its '+GAME.currentMonster.getDickAdjective()+' member and '+GAME.currentMonster.getBallAdjective()+' nuts. You push him off to have time to decide what to do, feeling glad it\'s not looking for a fight.';}
-				}
-			],
-			neutral:
-			[
-				{
-					text:function(){return 'You are surprised by a nearby noise, turning and watching as a '+GAME.currentMonster.color+' wolf appears and jumps back, apparently as scared by you as you were by him.';}
-				}
-			],
-			analsex:
-			[
-				{
-					text:function(){return 'The wolf jumps over you, humping without aim, pressing against your butt and covering you in precum before its '+GAME.currentMonster.getDickAdjective()+' member finds your ass, plunging deep into you. You moan in '+(GAME.p.isAddicted() ? 'bliss' : 'pain')+' as it forces your hole open, fucking you savagely, seeking only to fill you with its cum. It doesn\'t takes long before you are panting like him, pushing against its thrusts, enjoying the feeling of its claws digging against your thighs as he holds you in place. You feel its '+GAME.currentMonster.getDickAdjective()+' cock shooting warm, pre deep inside your ass every time its '+GAME.currentMonster.getBallAdjective()+' balls slap against you. '+(GAME.p.isAddicted() ? 'You scream, scaring the beast and making it dig its claws deeper and bite the back of your neck roughly as you really get into it, feeling a strange pleasure from submitting yourself to a feral beast, pushing harder and harder against its thrusts, his knot entering and leaving your asshole with every thrust.' : 'Its knot, inflating with every thrust, enters you and doesn\'t exits afterwards, leaving him a small space to thrust, but the wolf makes the most of it, doubling its pace.')+' Finally, the beast howls as it starts to cum, shivering on top of you as his seed floods your ass. Soon after, the beast, still tied into you, jumps off you, spinning its member inside you as he turns away from you, standing ass to ass with you as he finishes cumming into you, its knot deflating soon after, leaving you feeling well-used.';},
-					specialEffect:doesNothing
-				}
-			],
-
-			vaginalsex:
-			[
-				{
-					text:function(){return 'As you fall on the floor, the '+GAME.currentMonster.color+' wolf quickly pounces on top of you, its claws digging against your thighs as he mounts you. '+(GAME.p.isAddicted() ? 'You slide your hand between your legs, guiding the wolf\'s cock to your '+GAME.p.getVaginaDescription()+', and let off a pleased moan as he plunges into you.' : 'The wolf thrusts blindly for a moment, its '+GAME.currentMonster.getDickAdjective()+' tool finding its way into your cunt.')+' The wolf thrusts fiercely, '+(GAME.p.hasBreasts() ? 'making your tits shake back and forth with each deep movement, ' : '')+'eliciting soft moans from you as he takes you, pleasant tingles rushing through your pussy. It doesn\'t takes long for the thin spurts of watery pre to change to thick, warm jets of cum, the wolf humping even faster as he cums. Its knot, too small to tie properly, slides in and out of your cunt, pressing against your clit with each thrust. The beast rests on top of you for a moment, panting, then licks your face and runs off, its tail wagging.';},
-					specialEffect:doesNothing
-				}
-			],
-
-			genderneutralsex:
-			[
-				{
-					text:function(){return 'todo';},
-					specialEffect:doesNothing
-				}
-			]
-		}
-	};
-	feralWolf.prototype = genericMonster;
 	
 	/*
 	
@@ -501,5 +249,6 @@
 	<script src="main.js"></script>
 	<script src="interface.js"></script>
 	<script src="battle.js"></script>
+	<script src="monster.js"></script>
 </body>
 </html>
