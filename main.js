@@ -46,14 +46,13 @@ GAME.main = {
 			GAME.interface.addText("When you encounter a monster, it will usually be in three situations. You surprise it, it surprises you, or you both notice each other quick enough. Then you can try to pick a fight, have sex with the monster if it's willing, or run away. Sometimes you'll only notice the monster after it's too late or it's not willing, so you might not be able to do one or two of those things.");
 			GAME.interface.addText("There's more to it, this was just a quick crash course but you will figure the rest out on your own.");
 			GAME.interface.addText("So, wanna try a fight against my pet?");
-			GAME.interface.drawButtons({text:'Yes', buttonFunction:GAME.main.newGame.petFight}, {text:'No', buttonFunction:GAME.main.newGame.start});
+			GAME.interface.drawButtons({text:'Yes', buttonFunction:GAME.main.newGame.tutorialFight}, {text:'No', buttonFunction:GAME.main.newGame.start});
 		},
-		petFight:function(){
-			document.addEventListener('battleOver', GAME.main.newGame.petFightOver(), false);
-
+		tutorialFight:function(){
+			document.addEventListener('battleOver', GAME.main.newGame.tutorialFightOver, false);
 			GAME.battle.startFight(GAME.p, 'feralWolf');
 		},
-		petFightOver:function(){
+		tutorialFightOver:function(){
 			GAME.interface.addText('TODO');
 		}
 	},
