@@ -6,18 +6,16 @@
 	<link rel="stylesheet" type="text/css" href="p.css">
 </head>
 <body>
-	<div id="wrapper">
-		<header>Test header!</header>
-		<div class="middle">
+	<header>Test header!</header>
+	<div class="middle">
 
-			<div class="container">
-				<main id="textArea">
-					maintest
-				</main>
-			</div>
-
-			<aside id="statArea">sidebar</aside>
+		<div class="container">
+			<main id="textArea">
+				maintest
+			</main>
 		</div>
+
+		<aside id="statArea"></aside>
 	</div>
 	<footer id="buttonArea"></div>
 	<script>
@@ -67,105 +65,6 @@
 	}
 	
 
-	
-	function functionButtonfuckVaginal(){ // TODO: debug, remove after done
-		fuck (feralWolf, 'vagina');
-	};
-	
-	/**
-	* Does all the math for the fucking (or passes it ahead), then:
-	* 1- Applies special effects for the monster
-	* 2- Should not apply the special effect of the scene? TODO: figure this out
-	* 3- This is where the stretching is calculated, YET this is not where the skill should increase TODO: figure this out too
-	*
-	* @param partner - the monster OBJECT (can't emphasize this enough), probably will always be GAME.currentMonster outside of special events and post-defeat rape
-	* @param where - a string, either 'vagina' or 'ass'. Validated, panics out if not one of these and proceeds to assume the ass TODO: Will the player ALWAYS have an ass? Might change it to assume mouth later?
-	*
-	* @ TODO: Figure out where in the code structure this needs to be passed to and adapt it
-	* @ TODO: Figure out a more unique name (tentatively, simulateSex?) for it to make it easier for those who don't know the code to ctrl+f for it
-	*/
-	function fuck (partner, where) {
-		// validating the where parameter
-		if (!(where === 'ass' || where === 'vagina')){
-			alert("BUG ALERT! READ EVERYTHING IN CAPS CAREFULLY! Some piece of bad code (bad, bad code, no treat for you) told the monster to fuck you somewhere that wasn't the ass or the vagina! Assuming they meant your ass, if you don't have an asshole THE GAME MIGHT BREAK SO DO NOT OVERWRITE YOUR SAVE AND REPORT THIS AS SOON AS POSSIBLE!");
-			where = 'ass';
-		};
-		
-		var p = GAME.p;
-		partner.generateNew(); // DEBUG
-		var ifCame = false;
-		// text
-		// change p
-		// ???
-		
-		p.addLust(1);
-		if (p.lust > 100) { // if player came TODO: Make this a function, maybe? If there's need to use it in more than one place, then yes
-			p.changeLustToAfterOrgasm(); // some lust remains, only when you sleep with some toys it goes back to 0 // TODO: Is this a good idea? Sounds good on paper, needs testing.
-			ifCame = true;
-			
-			p.addAddiction(5);
-			p.addTired(-3);
-			
-			GAME.interface.addText(p.texts.generateOrgasmText());
-		};
-		
-		
-		
-		//p.cash += p.applyCashUpgrades(((p.inHeat()) ? (cash * 2) : cash)); // double cash in heat
-		
-		
-		// Filling player up and checking for overflow
-		
-		// TODO: Pass these calculations to a function? If for some reason there's need to use it in more than one place, then yes, otherwise we're trading code understandability for cleanliness and i kinda prefer the first
-		// TODO: Better math for gameplay reasons? At the moment your average feral wolf cums between 8 and 20ml, and the player can take 500ml, this means 500/14 = ~38 fucks to get completely filled, this would make the game VERY repetitive.
-		var cumAmount = 0;
-		cumAmount += ((p.ifCame) ? (partner.ballsize * 5) : (partner.ballsize * 4)); // extra cum if player came
-		cumAmount += ((p.inHeat()) ? (partner.ballsize * 2) : 0) // extra cum in heat
-		cumAmount = p.applyCumUpgrades(cumAmount); // apply upgrades that affect cum
-		
-		p.addCum(where, cumAmount, partner.uniqueName);
-		
-		//////////////////////////////////////////////////////////////
-		// soreness // TODO: PASS THESE TO SKILL-INCREASE-RELATED FUNCTIONS
-		var sorenessBase = (where == 'vagina') ? 0.2 : 0.3; // more soreness if taking it in the ass
-		sorenessBase -= (p.inHeat()) ? 0.1 : 0; // Less soreness during heat
-		p.soreness[where] += sorenessBase * partner.dicksize; 
-		//////////////////////////////////////////////////////////////
-		
-		
-		
-		
-		//////////////////////////////////////////////////////////////
-		// pregnancy
-		if (p.canGetPregnantFrom[where] && p.inHeat()){
-			var addedChance = Math.floor(p.cumInside[where].amount / 10);
-			if (randomBetween(0, 100) < (p.basePregnancyRate + addedChance)){
-				p.startPregnancy(partner, where);
-			};
-		};
-		//////////////////////////////////////////////////////////////
-		
-		
-		
-		
-		
-		//////////////////////////////////////////////////////////////
-		// tiredness // TODO: pass this to adventure code to treat cases like running away
-		p.addTired(1);
-		//////////////////////////////////////////////////////////////
-		
-		GAME.p = p;
-		console.log(GAME.p); // DEBUG
-	}
-	
-	var buttons = document.getElementById('buttonArea');
-	var buttonFuckVaginal = document.createElement('button');
-		buttonFuckVaginal.innerHTML = "Fuck vagina";
-		buttons.appendChild(buttonFuckVaginal);
-		buttonFuckVaginal.onclick = functionButtonfuckVaginal;
-	
-	
-	
 	/*
 	
 	http://en.wiktionary.org/wiki/Wikisaurus:testicles
