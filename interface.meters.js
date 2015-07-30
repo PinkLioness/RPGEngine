@@ -191,7 +191,7 @@ GAME.interface.classes.genericTextStatBar = function(name, divisions, max){
 
 	this.container.appendChild(this.topBar);
 };
-GAME.interface.classes.genericTextStatBar.updateValue = function(newValue){
+GAME.interface.classes.genericTextStatBar.prototype.updateValue = function(newValue){
 	if(newValue > this.max){
 		this.wentOverMax(newValue, this.max);
 		this.value = this.max;
@@ -213,7 +213,7 @@ GAME.interface.classes.genericTextStatBar.updateValue = function(newValue){
 	this.topBar.innerHTML = sprintf('%s: %s', this.statName, this.messages[i]);
 };
 
-GAME.interface.classes.genericTextStatBar.updateMax = function(newMax){
+GAME.interface.classes.genericTextStatBar.prototype.updateMax = function(newMax){
 	if(this.value > newMax){
 		this.wentOverMax(this.value, newMax);
 		this.value = newMax;
@@ -223,17 +223,17 @@ GAME.interface.classes.genericTextStatBar.updateMax = function(newMax){
 	this.max = newMax;
 	this.updateValue(this.value);
 };
-GAME.interface.classes.genericTextStatBar.wentOverMax = doesNothing;
-GAME.interface.classes.genericTextStatBar.fellUnderZero = doesNothing;
+GAME.interface.classes.genericTextStatBar.prototype.wentOverMax = doesNothing;
+GAME.interface.classes.genericTextStatBar.prototype.fellUnderZero = doesNothing;
 
 
 ///////////////////////////////////////////////////////////////
 
 GAME.interface.classes.textStatBarWithTypeOfContents = function(){
-	this.prototype.constructor.apply(this, arguments);
+	GAME.interface.classes.genericTextStatBar.apply(this, arguments);
 };
-GAME.interface.classes.textStatBarWithTypeOfContents.prototype = GAME.interface.classes.genericTextStatBar;
-GAME.interface.classes.textStatBarWithTypeOfContents.updateValue = function(newValue, monsterName){
+GAME.interface.classes.textStatBarWithTypeOfContents.prototype = Object.create(GAME.interface.classes.genericTextStatBar.prototype);
+GAME.interface.classes.textStatBarWithTypeOfContents.prototype.updateValue = function(newValue, monsterName){
 	this.prototype.updateValue.apply(this, [newValue]);
 	this.topBar.innerHTML = sprintf('%s %s', this.topBar.innerHTML, monsterName);
 	console.log(this.topBar.innerHTML);
