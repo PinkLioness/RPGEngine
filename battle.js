@@ -17,49 +17,41 @@ GAME.battle = {
 		}
 	 */
 	startFight:function(player, monsterType, stopIf){
-		if(GAME.monsters[monsterType] == undefined){
-			alert('The monster '+monsterType+' does not exist, this is a bug.');
-		};
-		
 		// Filling in the stopIf parameter so we can call it later without raising problems
 		if(stopIf == undefined){
-			stopIf = function(){return undefined;};
+			stopIf = function(){return false;};
 		};
 		GAME.battle.stopIf = stopIf;
 
-		// Stop bad coders from sending a dead player into battle
-		if(GAME.battle.isDefeated(player)){
-			return {
-				playerWon:false,
-				player:player
-			};
+		if(GAME.monsters[monsterType] == undefined){
+			alert('The monster '+monsterType+' does not exist, this is a bug.');
 		};
-
 		var someoneDefeated = false;
-		GAME.battle.monster = GAME.battle.cloneMonster(GAME.monsters[monsterType]);
-		GAME.battle.monster.generateNew();
+		////////////////////////////
+		// GAME.battle.monster = GAME.battle.cloneMonster(GAME.monsters[monsterType]); // This is so we don't destroy the original monster in the monsters array
+		// This might be a clearer way to do what we want // TODO: Test this
+		GAME.battle.monster = Object.create(GAME.monsters[monsterType]);
+		/////////////////////////
+		GAME.battle.monster.lust = 0;
 		GAME.battle.monster.health = 100;
+		GAME.battle.monster.generateNew();
 
-		while( !someoneDefeated || stopIf(player, monster) ){
-			GAME.battle.simulateRound(GAME.battle.getPlayerInput(player));
+		GAME.battle.player = player;
+		// Stop bad coders from sending a dead player into battle
+		GAME.battle.checkState();
 
-			if(GAME.battle.isDefeated(monster) || GAME.battle.isDefeated(player)){
-				someoneDefeated = true;
-			};
-		}
+		GAME.interface.clearTextAndButtons();
+		GAME.battle.monsterIntro();
+		GAME.battle.updateHPDisplay();
 
-		var playerWon = GAME.battle.isDefeated(monster);
-		return {
-			playerWon:playerWon,
-			player:player
-		};
+		GAME.battle.generateButtons(GAME.battle.player);
 	},
- 	
+	
 	cloneMonster:function(reference){
 		var clone = {};
 		for(var i in reference){
 			if(typeof(reference[i])=="object" && reference[i] != null){
-				clone[i] = cloneObject(reference[i]);
+				clone[i] = GAME.battle.cloneMonster(reference[i]);
 			}else{
 				clone[i] = reference[i];
 			}
@@ -77,13 +69,15 @@ GAME.battle = {
 		}
 		
 		var attackList = [];
-		for(var i=0; i < this.player.skills.length; i++){
-			if (this.player.skills[i].canUse == true){
-				var attackFunction = generateAttackFunction(this.player.skills[i]);
+		for(var i=0; i < GAME.battle.player.skills.length; i++){
+			if (GAME.battle.player.skills[i].canUse == true){
+				var attackFunction = generateAttackFunction(GAME.battle.player.skills[i]);
 				
-				attackList.push({text:this.player.skills.name, buttonFunction:attackFunction});
-			};
+				attackList.push({text:GAME.battle.player.skills[i].name, buttonFunction:attackFunction});
+			}
 		};
+
+		GAME.interface.clearButtons();
 
 		// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply
 		GAME.interface.drawButtons.apply(undefined, attackList);
@@ -95,70 +89,101 @@ GAME.battle = {
 		 	{
 				attackType: String - Either "physical" or "magical". Anything else gives an error.
 				element: String - String containing the damage type for magic (fire, ice, energy...). May be used for enchanted weapons too.
+				attacksStat: String - Must be a Number defined on the monster.
 
-				strenght: Object {
-					used - Boolean, defines if strenght is used in the calculation. To make it be used but not variable, min and max must be 0.
+				strength: Object {
+					used - Boolean, defines if strength is used in the calculation. To make it be used but not variable, min and max must be 0.
 					min - minimum percentage for the modifier, should work for negatives
 					max - maximum percentage
 				}
-				dexterity, intelligence, wisdom, speed, constitution, sex - Objects following the rules of the one above
+				dexterity, intelligence, wisdom, speed, constitution, sexuality - Objects following the rules of the one above
 			}
 		 *
 		 */
 		var attackPowerFunction = undefined;
 		if (attack.attackType == "physical"){
-			attackPowerFunction = this.player.getPhysicalAttackPower;
+			attackPowerFunction = GAME.battle.player.getPhysicalAttackPower;
 		}else if(attack.attackType == "magical"){
-			attackPowerFunction = this.player.getMagicalAttackPower;
+			attackPowerFunction = GAME.battle.player.getMagicalAttackPower;
 		}else{
 			attackPowerFunction = function(){alert('BUG ALERT! The attack type is not physical neither magical!');};
 		};
 
-		var playerAttackPower = attackPowerFunction();
-		playerAttackPower += (attack.strenght.used ? (randomPercentageMultiplierFromInterval(attack.strenght.min, attack.strenght.max) * this.player.getStrenght()) : 0);
-		playerAttackPower += (attack.dexterity.used ? (randomPercentageMultiplierFromInterval(attack.dexterity.min, attack.dexterity.max) * this.player.getDexterity :) 0);
-		playerAttackPower += (attack.intelligence.used ? (randomPercentageMultiplierFromInterval(attack.intelligence.min, attack.intelligence.max) * this.player.getIntelligence()) : 0);
-		playerAttackPower += (attack.wisdom.used ? (randomPercentageMultiplierFromInterval(attack.wisdom.min, attack.wisdom.max) * this.player.getWisdom()) : 0);
-		playerAttackPower += (attack.speed.used ? (randomPercentageMultiplierFromInterval(attack.speed.min, attack.speed.max) * this.player.getSpeed()) : 0);
-		playerAttackPower += (attack.constitution.used ? (randomPercentageMultiplierFromInterval(attack.constitution.min, attack.constitution.max) * this.player.getConstitution()) : 0);
-		playerAttackPower += (attack.sexuality.used ? (randomPercentageMultiplierFromInterval(attack.sexuality.min, attack.sexuality.max) * this.player.getSexuality() ) : 0);
-		playerAttackPower += this.player.calculateLuck();
+		if(!Number.isNaN(Number(GAME.battle.monster[attack.attacksStat]))){
+			alert('BUG ALERT! The stat being attacked is not a number!');
+		}
 
-		var monsterDefense = this.monster.getDefense({type:attack.attackType, element:attack.element});
+
+		var playerAttackPower = attackPowerFunction();
+		playerAttackPower += (attack.strength.used ? (randomPercentageMultiplierFromInterval(attack.strength.min, attack.strength.max) * GAME.battle.player.getstrength()) : 0);
+		playerAttackPower += (attack.dexterity.used ? (randomPercentageMultiplierFromInterval(attack.dexterity.min, attack.dexterity.max) * GAME.battle.player.getDexterity()) : 0);
+		playerAttackPower += (attack.intelligence.used ? (randomPercentageMultiplierFromInterval(attack.intelligence.min, attack.intelligence.max) * GAME.battle.player.getIntelligence()) : 0);
+		playerAttackPower += (attack.wisdom.used ? (randomPercentageMultiplierFromInterval(attack.wisdom.min, attack.wisdom.max) * GAME.battle.player.getWisdom()) : 0);
+		playerAttackPower += (attack.speed.used ? (randomPercentageMultiplierFromInterval(attack.speed.min, attack.speed.max) * GAME.battle.player.getSpeed()) : 0);
+		playerAttackPower += (attack.constitution.used ? (randomPercentageMultiplierFromInterval(attack.constitution.min, attack.constitution.max) * GAME.battle.player.getConstitution()) : 0);
+		playerAttackPower += (attack.sexuality.used ? (randomPercentageMultiplierFromInterval(attack.sexuality.min, attack.sexuality.max) * GAME.battle.player.getSexuality() ) : 0);
+		playerAttackPower += GAME.battle.player.calculateLuck();
+
+		var monsterDefense = GAME.battle.monster.getDefense({type:attack.attackType, element:attack.element});
 		var damageToEnemy = playerAttackPower - monsterDefense;
-		this.monster.health -= damageToEnemy;
+		GAME.battle.monster.health -= damageToEnemy;
 
 		GAME.battle.printPlayerHitMessage(attack, damageToEnemy);
 
-		if(this.monster.health > 0){
+		if(GAME.battle.monster.health > 0){ // TODO: add support to a battle script
 			var monsterAttack = GAME.battle.monster.skills[randomIntFromInterval(0, GAME.battle.monster.skills.length - 1)];
-			var playerDefense = this.player.getDefense({type:monsterAttack.attackType, element:monsterAttack.element});
+			var playerDefense = GAME.battle.player.getDefense({type:monsterAttack.attackType, element:monsterAttack.element});
 			var damageToPlayer = monsterAttack.getAttackPower() - playerDefense;
 
-			this.player.health -= damageToPlayer;
-			GAME.battle.printMonsterHitMessage(damageToPlayer, monsterAttack);
+			GAME.battle.player.health -= damageToPlayer;
+			GAME.battle.printMonsterHitMessage(GAME.battle.monster.longName, damageToPlayer, monsterAttack);
 		};
 
-		this.checkState();
+		GAME.battle.checkState();
 	},
 
 	checkState:function(){
-		var stopIfCondition = stopIf(this.player, this.monster);
+		var stopIfCondition = GAME.battle.stopIf(GAME.battle.player, GAME.battle.monster);
 
-		if(this.isDefeated(this.player)){
-			this.battleOver({playerWon:false,player:player});
-		}else if(this.isDefeated(this.monster)){
-			this.battleOver({playerWon:true,player:player});
-		}else if(stopIfCondition != undefined){
-			this.battleOver(stopIfCondition);
+		if(GAME.battle.isDefeated(GAME.battle.player)){
+			GAME.battle.battleOver({playerWon:false,player:GAME.battle.player, monster:GAME.battle.monster});
+		}else if(GAME.battle.isDefeated(GAME.battle.monster)){
+			GAME.battle.battleOver({playerWon:true,player:GAME.battle.player, monster:GAME.battle.monster});
+		}else if(stopIfCondition != false){
+			GAME.battle.battleOver(stopIfCondition);
 		}else{
-			this.generateButtons(); // next battle round
-		};
+			GAME.battle.updateHPDisplay();
+			GAME.battle.generateButtons(); // next battle round
+		}
 	},
 
-	printMonsterHitMessage:function(damageToPlayer, monsterAttack){
-		var monsterAttackText = monsterAttack.attackText[randomIntFromInterval(0, GAME.battle.monster.skills.length - 1)];
-		GAME.interface.addText("The "+GAME.battle.monster.longName+' '+monsterAttackText+" you for "+damageToPlayer+"% of your HP!");
+	printMonsterHitMessage:function(monsterName, damageToPlayer, monsterAttack){
+		var monsterAttackText = monsterAttack.attackText[randomIntFromInterval(0, monsterAttack.attackText.length - 1)];
+		GAME.interface.addText("The "+monsterName+' '+monsterAttackText+" you for "+damageToPlayer+"% of your HP!");
 	},
-	printPlayerHitMessage:function(damageToEnemy){};
+	printPlayerHitMessage:function(damageToEnemy){
+		GAME.interface.addText("You getWeaponAttackText() the enemy for "+damageToEnemy+"% of their HP");
+	},
+
+	battleOver:function(details){
+		document.dispatchEvent(new CustomEvent('battleOver', details));
+	},
+
+	monsterIntro:function(monster){
+		GAME.interface.addText("Monster intro goes here");
+	},
+
+	updateHPDisplay:function(){
+		// GAME.battle.player.updateStats(); // TODO: Think more on how to call this
+
+		GAME.interface.statContainers.hp.updateValue(GAME.battle.player.health);
+		GAME.interface.statContainers.lust.updateValue(GAME.battle.player.lust);
+
+		GAME.interface.addText(sprintf("Monster is now with %u%% health", GAME.battle.monster.health));
+	},
+
+	isDefeated:function(thing){
+		// This will probably grow a lot with time?
+		return thing.health <= 0;
+	}
 };
