@@ -49,7 +49,7 @@ GAME.interface.classes.statBar.prototype.updateValue = function(newValue){
 	this.topBar.style.width = (percentage > 50 ? percentage : 50)+'%'; // Don't let the value get TOO close to the text2
 	this.topBar.dataset.value = percentage + '%';
 
-	this.meter.value = sprintf('%f.1%%', percentage);
+	this.meterBar.value = sprintf('%f.1%%', percentage);
 };
 
 GAME.interface.classes.statBar.prototype.updateMax = function(newMax){
@@ -60,7 +60,7 @@ GAME.interface.classes.statBar.prototype.updateMax = function(newMax){
 
 	this.percentile = max / 100;
 	this.meterBar.max = newMax;
-	this.updateValue(this.meter.value); // Realign the top text.
+	this.updateValue(this.meterBar.value); // Realign the top text.
 };
 // These run when the update means the condition in their name happens
 GAME.interface.classes.statBar.prototype.wentOverMax = doesNothing;
@@ -76,7 +76,7 @@ GAME.interface.classes.statBar.prototype.fellUnderZero = doesNothing;
  * @param name: The name displayed to the top left of the bar. Printed exactly as passed.
  * @param units: Text displayed to the right of the value. Can be undefined.
  * @param limitless: true if you can collect infinite things, false if you have an upper limit.
- * @param max: Maximum value for the meter. Must be bigger than zero. Ignored if limitless is true.
+ * @param max: Maximum value for the stat. Must be bigger than zero. Ignored if limitless is true.
  *
  */
 GAME.interface.classes.meterlessStatBar = function(name, unit, limitless, max){
@@ -150,7 +150,7 @@ GAME.interface.classes.meterlessStatBar.prototype.fellUnderZero = doesNothing;
  *
  * @param name: The name displayed to the top left of the bar. Printed exactly as passed.
  * @param divisions: Array of {message:string, percentage:number}. 
- * @param max: Maximum value for the meter. Must be bigger than the last division.
+ * @param max: Maximum value for the stat. Must be bigger than the last division.
  *
  */
 GAME.interface.classes.genericTextStatBar = function(name, divisions, max){
@@ -240,5 +240,5 @@ GAME.interface.classes.textStatBarWithTypeOfContents.prototype.updateValue = fun
 	console.log(this.topBar.innerHTML);
 };
 
-GAME.interface.classes.textStatBarWithTypeOfContents.prototype.wentOverMax = function(value, max){document.dispatchEvent(new CustomEvent('statWentOverMax', {'value':value, 'max', max, 'hole', hole}));};
-GAME.interface.classes.textStatBarWithTypeOfContents.prototype.fellUnderZero = function(value){document.dispatchEvent(new CustomEvent('statFellUnderZero', {'value':value, 'hole', hole}));};
+GAME.interface.classes.textStatBarWithTypeOfContents.prototype.wentOverMax = function(value, max){document.dispatchEvent(new CustomEvent('statWentOverMax', {'value':value, 'max': max, 'hole': hole}));};
+GAME.interface.classes.textStatBarWithTypeOfContents.prototype.fellUnderZero = function(value){document.dispatchEvent(new CustomEvent('statFellUnderZero', {'value':value, 'hole': hole}));};
