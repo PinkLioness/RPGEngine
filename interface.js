@@ -94,7 +94,7 @@ GAME.interface = {
 		GAME.interface.statContainers['lust'] = GAME.interface.addMeter(new GAME.interface.classes.statBar("Lust"));
 		GAME.interface.statContainers['money'] = GAME.interface.addMeter(new GAME.interface.classes.meterlessStatBar("Money", "copper", true));
 
-		var divisions = [
+		var divisions = [ // TODO: Figure out the best place for this to be
 			{message:'Empty', percentage:0},
 			{message:'A bit of', percentage:1},
 			{message:'Pretty full with', percentage:25},
