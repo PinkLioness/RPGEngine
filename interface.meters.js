@@ -230,6 +230,7 @@ GAME.interface.classes.genericTextStatBar.prototype.fellUnderZero = doesNothing;
 ///////////////////////////////////////////////////////////////
 
 GAME.interface.classes.textStatBarWithTypeOfContents = function(){
+	this.hole = (arguments[0] == 'Ass') ? 'ass' : 'vagina'; // So we can catch the event and use this data like GAME.p.something[hole]
 	GAME.interface.classes.genericTextStatBar.apply(this, arguments);
 };
 GAME.interface.classes.textStatBarWithTypeOfContents.prototype = Object.create(GAME.interface.classes.genericTextStatBar.prototype);
@@ -238,3 +239,6 @@ GAME.interface.classes.textStatBarWithTypeOfContents.prototype.updateValue = fun
 	this.topBar.innerHTML = sprintf('%s %s', this.topBar.innerHTML, monsterName);
 	console.log(this.topBar.innerHTML);
 };
+
+GAME.interface.classes.textStatBarWithTypeOfContents.prototype.wentOverMax = function(value, max){document.dispatchEvent(new CustomEvent('statWentOverMax', {'value':value, 'max', max, 'hole', hole}));};
+GAME.interface.classes.textStatBarWithTypeOfContents.prototype.fellUnderZero = function(value){document.dispatchEvent(new CustomEvent('statFellUnderZero', {'value':value, 'hole', hole}));};
