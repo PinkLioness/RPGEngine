@@ -47,7 +47,7 @@ GAME.interface.classes.statBar.prototype.updateValue = function(newValue){
 	var percentage = this.value / this.percentile;
 
 	this.topBar.style.width = (percentage > 50 ? percentage : 50)+'%'; // Don't let the value get TOO close to the text2
-	this.topBar.dataset.value = sprintf('%f.1%%', percentage);
+	this.topBar.dataset.value = sprintf('%.1f%%', percentage);
 
 	this.meterBar.value = percentage;
 };
