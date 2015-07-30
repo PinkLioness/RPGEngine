@@ -233,3 +233,8 @@ GAME.interface.classes.textStatBarWithTypeOfContents = function(){
 	this.prototype.constructor.apply(this, arguments);
 };
 GAME.interface.classes.textStatBarWithTypeOfContents.prototype = GAME.interface.classes.genericTextStatBar;
+GAME.interface.classes.textStatBarWithTypeOfContents.updateValue = function(newValue, monsterName){
+	this.prototype.updateValue.apply(this, [newValue]);
+	this.topBar.innerHTML = sprintf('%s %s', this.topBar.innerHTML, monsterName);
+	console.log(this.topBar.innerHTML);
+};

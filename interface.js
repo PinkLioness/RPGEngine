@@ -104,7 +104,7 @@ GAME.interface = {
 			{message:'Bursting with', percentage:90}
 		];
 		GAME.interface.statContainers['assVolume'] = GAME.interface.addMeter(new GAME.interface.classes.textStatBarWithTypeOfContents('Ass', divisions, 100));
-		GAME.interface.statContainers['vaginalVolume'] = GAME.interface.addMeter(new GAME.interface.classes.textStatBarWithTypeOfContents('Vaginal', divisions, 100));
+		GAME.interface.statContainers['vaginalVolume'] = GAME.interface.addMeter(new GAME.interface.classes.textStatBarWithTypeOfContents('Vagina', divisions, 100));
 
 		GAME.interface.statArea.appendChild(document.createElement('hr'));
 		
